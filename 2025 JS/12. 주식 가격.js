@@ -20,26 +20,31 @@ abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWX와 같이 push만 되는 경�
 */
 
 const fs = require('fs');
-const input = +fs.readFileSync('./dev/stdin').toString();
+const input = fs
+  .readFileSync('./dev/stdin')
+  .toString()
+  .split(',')
+  .map(el => +el);
 
-function solution(s) {
-  let answer = 1;
-  const stack = [s[0]];
+function solution(prices) {
+  var answer = [];
+  const stack = [];
 
-  for (let i = 1; i < s.length; i++) {
-    if (s[i] === stack[stack.length - 1]) {
-      stack.pop();
-    } else {
-      stack.push(s[i]);
+  for (let i = 0; i < prices.length; i++) {
+    let cnt = 0;
+
+    while (stack.length && prices[i] < prices[stack[stack.length - 1]]) {
+      const top = stack.pop();
+      answer[top] = i - top;
     }
-
-    if (s.length - i - 1 < stack.length) {
-      answer = 0;
-      break;
-    }
+    stack.push(i);
   }
 
-  if (stack.length) answer = 0;
+  while (stack.length > 0) {
+    const top = stack.pop();
+    answer[top] = prices.length - 1 - top;
+  }
+
   return answer;
 }
 
